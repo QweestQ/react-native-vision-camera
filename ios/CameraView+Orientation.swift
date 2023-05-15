@@ -28,18 +28,6 @@ extension CameraView {
   }
 
   internal func updateOrientation() {
-    // Updates the Orientation for all rotable
-    let isMirrored = self.videoDeviceInput?.device.position == .front
-
-    let connectionOrientation = self.outputOrientation
-    self.captureSession.outputs.forEach { output in
-      output.connections.forEach { connection in
-        if connection.isVideoMirroringSupported {
-          connection.automaticallyAdjustsVideoMirroring = false
-          connection.isVideoMirrored = isMirrored
-        }
-        connection.setInterfaceOrientation(connectionOrientation)
-      }
-    }
+    self.videoPreviewLayer.connection?.setInterfaceOrientation(self.outputOrientation)
   }
 }

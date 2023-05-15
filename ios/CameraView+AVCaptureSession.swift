@@ -137,8 +137,6 @@ extension CameraView {
       captureSession.addOutput(videoOutput!)
     }
 
-    onOrientationChanged()
-
     invokeOnInitialized()
     isReady = true
     ReactLogger.log(level: .info, message: "Session successfully configured!")

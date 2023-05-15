@@ -146,10 +146,6 @@ public final class CameraView: UIView {
                                            selector: #selector(audioSessionInterrupted),
                                            name: AVAudioSession.interruptionNotification,
                                            object: AVAudioSession.sharedInstance)
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(onOrientationChanged),
-                                           name: UIDevice.orientationDidChangeNotification,
-                                           object: nil)
   }
 
   @available(*, unavailable)
@@ -167,9 +163,6 @@ public final class CameraView: UIView {
     NotificationCenter.default.removeObserver(self,
                                               name: AVAudioSession.interruptionNotification,
                                               object: AVAudioSession.sharedInstance)
-    NotificationCenter.default.removeObserver(self,
-                                              name: UIDevice.orientationDidChangeNotification,
-                                              object: nil)
   }
 
   override public func willMove(toSuperview newSuperview: UIView?) {
@@ -310,11 +303,6 @@ public final class CameraView: UIView {
       invokeOnError(.device(.configureError), cause: error)
       return
     }
-  }
-
-  @objc
-  func onOrientationChanged() {
-    updateOrientation()
   }
 
   // pragma MARK: Event Invokers

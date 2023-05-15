@@ -21,9 +21,9 @@ extension AVCaptureConnection {
       case .portraitUpsideDown:
         videoOrientation = .portraitUpsideDown
       case .landscapeLeft:
-        videoOrientation = .landscapeLeft
-      case .landscapeRight:
         videoOrientation = .landscapeRight
+      case .landscapeRight:
+        videoOrientation = .landscapeLeft
       case .unknown:
         fallthrough
       @unknown default:
