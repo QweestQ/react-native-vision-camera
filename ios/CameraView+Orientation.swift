@@ -28,6 +28,8 @@ extension CameraView {
   }
 
   internal func updateOrientation() {
-    self.videoPreviewLayer.connection?.setInterfaceOrientation(self.outputOrientation)
+    DispatchQueue.main.async {
+      self.videoPreviewLayer.connection?.setInterfaceOrientation(self.outputOrientation)
+    }
   }
 }
