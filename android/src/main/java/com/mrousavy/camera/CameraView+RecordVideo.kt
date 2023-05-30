@@ -52,7 +52,16 @@ fun CameraView.startRecording(options: ReadableMap, onRecordCallback: Callback) 
   activeVideoRecording = recording.start(ContextCompat.getMainExecutor(context), object : Consumer<VideoRecordEvent> {
     override fun accept(event: VideoRecordEvent?) {
       if (event is VideoRecordEvent.Finalize) {
-        if (event.hasError()) {
+        var errorMap: ReadableMap? = null
+        var resultMap: ReadableMap? = null
+
+        if (event.outputResults.outputUri.toString().isNotEmpty()) {
+          // recording saved successfully!
+          resultMap = Arguments.createMap()
+          resultMap.putString("path", event.outputResults.outputUri.toString())
+          resultMap.putDouble("duration", /* seconds */ event.recordingStats.recordedDurationNanos.toDouble() / 1000000.0 / 1000.0)
+          resultMap.putDouble("size", /* kB */ event.recordingStats.numBytesRecorded.toDouble() / 1000.0)
+        } else if (event.hasError()) {
           // error occured!
           val error = when (event.error) {
             VideoRecordEvent.Finalize.ERROR_ENCODING_FAILED -> VideoEncoderError(event.cause)
@@ -64,16 +73,10 @@ fun CameraView.startRecording(options: ReadableMap, onRecordCallback: Callback) 
             VideoRecordEvent.Finalize.ERROR_SOURCE_INACTIVE -> InactiveSourceError(event.cause)
             else -> UnknownCameraError(event.cause)
           }
-          val map = makeErrorMap("${error.domain}/${error.id}", error.message, error)
-          onRecordCallback(null, map)
-        } else {
-          // recording saved successfully!
-          val map = Arguments.createMap()
-          map.putString("path", event.outputResults.outputUri.toString())
-          map.putDouble("duration", /* seconds */ event.recordingStats.recordedDurationNanos.toDouble() / 1000000.0 / 1000.0)
-          map.putDouble("size", /* kB */ event.recordingStats.numBytesRecorded.toDouble() / 1000.0)
-          onRecordCallback(map, null)
+          errorMap = makeErrorMap("${error.domain}/${error.id}", error.message, error)
         }
+
+        onRecordCallback(resultMap, errorMap)
 
         // reset the torch mode
         camera!!.cameraControl.enableTorch(torch == "on")
